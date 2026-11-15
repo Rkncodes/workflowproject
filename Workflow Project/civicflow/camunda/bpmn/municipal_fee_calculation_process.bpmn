@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  id="Definitions_FeeCalculation"
+                  targetNamespace="http://bpmn.io/schema/bpmn"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.49.0">
+
+  <bpmn:process id="Process_MunicipalFeeCalculation" name="Municipal Fee Calculation Process" isExecutable="true">
+
+    <bpmn:startEvent id="Start_FeeCalculation" name="Fee Calculation Requested">
+      <bpmn:outgoing>Flow_To_FeeWorker</bpmn:outgoing>
+    </bpmn:startEvent>
+
+    <bpmn:serviceTask id="Task_ComputeMunicipalFee" name="Calculate Fee Based on Rates &amp; Area">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fee-calculation-worker" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_To_FeeWorker</bpmn:incoming>
+      <bpmn:outgoing>Flow_FeeCalculated</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:endEvent id="End_FeeCalculation" name="Fee Calculation Completed">
+      <bpmn:incoming>Flow_FeeCalculated</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_To_FeeWorker" sourceRef="Start_FeeCalculation" targetRef="Task_ComputeMunicipalFee" />
+    <bpmn:sequenceFlow id="Flow_FeeCalculated" sourceRef="Task_ComputeMunicipalFee" targetRef="End_FeeCalculation" />
+
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_FeeCalculation">
+    <bpmndi:BPMNPlane id="BPMNPlane_Fee" bpmnElement="Process_MunicipalFeeCalculation">
+      <bpmndi:BPMNShape id="Shape_Start_Fee" bpmnElement="Start_FeeCalculation">
+        <dc:Bounds x="172" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_Fee" bpmnElement="Task_ComputeMunicipalFee">
+        <dc:Bounds x="260" y="80" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Fee" bpmnElement="End_FeeCalculation">
+        <dc:Bounds x="482" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_To_Fee" bpmnElement="Flow_To_FeeWorker">
+        <di:waypoint x="208" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Fee_Done" bpmnElement="Flow_FeeCalculated">
+        <di:waypoint x="420" y="120" />
+        <di:waypoint x="482" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
+
